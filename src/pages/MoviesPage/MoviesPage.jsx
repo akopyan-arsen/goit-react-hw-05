@@ -1,8 +1,7 @@
+import MovieList from "../../components/MovieList/MovieList";
 import { toast } from "react-hot-toast";
-import css from "./SearchBar.module.css";
-import { FcSearch } from "react-icons/fc";
 
-const SearchBar = ({ onSearch }) => {
+const MoviesPage = ({ movies, onSearch }) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     const form = evt.target;
@@ -18,22 +17,20 @@ const SearchBar = ({ onSearch }) => {
     form.reset();
   };
   return (
-    <header className={css.header}>
-      <form onSubmit={handleSubmit} className={css.form}>
+    <div>
+      <form onSubmit={handleSubmit}>
         <input
-          className={css.input}
           type="text"
           name="topic"
           autoComplete="off"
           autoFocus
-          placeholder="Search images and photos"
+          placeholder="Search movies"
         />
-        <button className={css.button} type="submit">
-          <FcSearch />
-        </button>
+        <button type="submit">Search</button>
       </form>
-    </header>
+      <MovieList movies={movies} />
+    </div>
   );
 };
 
-export default SearchBar;
+export default MoviesPage;
