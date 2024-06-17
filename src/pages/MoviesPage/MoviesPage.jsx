@@ -4,10 +4,13 @@ import { fetchMoviesWithTopic } from "../../components/movies-api";
 import { useState, useEffect } from "react";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { useSearchParams } from "react-router-dom";
+import Loader from "../../components/Loader/Loader";
+import css from "./MoviesPage.module.css";
 
 const MoviesPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [params, setSearchParams] = useSearchParams();
   const topic = params.get("query") ?? "";
 
@@ -17,11 +20,18 @@ const MoviesPage = () => {
     }
     const fetchMovies = async () => {
       try {
+        setLoading(true);
         setError(false);
         const data = await fetchMoviesWithTopic(topic);
-        setSearchResults(data.results);
+        if (data.results.length === 0) {
+          setSearchResults(null);
+        } else {
+          setSearchResults(data.results);
+        }
       } catch (error) {
         setError(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchMovies();
@@ -44,18 +54,27 @@ const MoviesPage = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={css.form}>
         <input
           type="text"
           name="topic"
           autoComplete="off"
           autoFocus
           placeholder="Search movies"
+          className={css.input}
         />
-        <button type="submit">Search</button>
+        <button type="submit" className={css.button}>
+          Search
+        </button>
       </form>
-      <MovieList movies={searchResults} />
+
+      {searchResults ? (
+        <MovieList movies={searchResults} />
+      ) : (
+        <div>Not Found</div>
+      )}
       {error && <ErrorMessage />}
+      {loading && <Loader />}
     </div>
   );
 };

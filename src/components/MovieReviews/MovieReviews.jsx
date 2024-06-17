@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchMovieReviews } from "../movies-api";
+import css from "./MovieReviews.module.css";
 
 const MovieReviews = () => {
   const { movieId } = useParams();
@@ -14,8 +15,11 @@ const MovieReviews = () => {
         setLoading(true);
         setError(false);
         const data = await fetchMovieReviews(movieId);
-        const firstTenReviews = data.results.slice(0, 10);
-        setReviews(firstTenReviews);
+        if (data.results.length === 0) {
+          setReviews(null);
+        } else {
+          setReviews(data.results.slice(0, 10));
+        }
       } catch (error) {
         setError(error);
       } finally {
@@ -37,12 +41,12 @@ const MovieReviews = () => {
     return <div>Not found</div>;
   }
   return (
-    <ul>
+    <ul className={css.reviewsWrapper}>
       {reviews.map((review) => {
         return (
-          <li key={review.id}>
+          <li key={review.id} className={css.review}>
             <h4>Author - {review.author}</h4>
-            <p>{review.content}</p>
+            <p className={css.text}>{review.content}</p>
           </li>
         );
       })}

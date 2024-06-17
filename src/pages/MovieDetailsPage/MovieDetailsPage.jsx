@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { fetchMovieDetails } from "../../components/movies-api";
 import css from "./MovieDetailsPage.module.css";
 import clsx from "clsx";
+import Loader from "../../components/Loader/Loader";
 
 const buildLinkClass = ({ isActive }) => {
   return clsx(css.link, isActive && css.active);
@@ -22,7 +23,7 @@ const MovieDetailsPage = () => {
   const defaultImg = "https://via.placeholder.com/200x300";
   const location = useLocation();
   const backLinkHref = location.state ?? "/movies";
-
+  console.log("location.state :>> ", location.state);
   useEffect(() => {
     async function getMovieDetails() {
       try {
@@ -40,7 +41,7 @@ const MovieDetailsPage = () => {
   }, [movieId]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (error) {
@@ -56,8 +57,10 @@ const MovieDetailsPage = () => {
 
   return (
     <>
-      <Link to={backLinkHref}>Back</Link>
-      <div>
+      <Link to={backLinkHref} className={css.backLink}>
+        Back
+      </Link>
+      <div className={css.wrapper}>
         <img
           src={
             movie["poster_path"]
@@ -80,22 +83,27 @@ const MovieDetailsPage = () => {
               return `${genre.name} `;
             })}
           </p>
-          <h2>Additional information</h2>
-          <ul>
-            <li>
-              <NavLink to="cast" className={buildLinkClass}>
-                Cast
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="reviews" className={buildLinkClass}>
-                Reviews
-              </NavLink>
-            </li>
-          </ul>
-          <Outlet />
         </div>
       </div>
+      <h2>Additional information</h2>
+
+      <ul className={css.add}>
+        <li>
+          <NavLink to="cast" className={buildLinkClass} state={location.state}>
+            Cast
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="reviews"
+            className={buildLinkClass}
+            state={location.state}
+          >
+            Reviews
+          </NavLink>
+        </li>
+      </ul>
+      <Outlet />
     </>
   );
 };

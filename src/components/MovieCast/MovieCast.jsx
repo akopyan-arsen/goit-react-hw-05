@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchMovieCast } from "../movies-api";
+import css from "./MovieCast.module.css";
 
 const MovieCast = () => {
   const { movieId } = useParams();
@@ -15,8 +16,7 @@ const MovieCast = () => {
         setLoading(true);
         setError(false);
         const data = await fetchMovieCast(movieId);
-        const firstTenCast = data.cast.slice(0, 10);
-        setCast(firstTenCast);
+        setCast(data.cast.slice(0, 10));
       } catch (error) {
         setError(error);
       } finally {
@@ -34,15 +34,15 @@ const MovieCast = () => {
     return <div>Error fetching movie details: {error.message}</div>;
   }
 
-  if (!cast) {
+  if (cast.length === 0) {
     return <div>Not found</div>;
   }
   return (
-    <ul>
+    <ul className={css.add}>
       {cast.map((actor) => {
         return (
-          <li key={actor.id}>
-            <h4>
+          <li key={actor.id} className={css.character}>
+            <h4 className={css.title}>
               {actor.name} - {actor.character}
             </h4>
             <img
